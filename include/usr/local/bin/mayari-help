@@ -1,0 +1,21 @@
+#!/bin/bash
+cat <<'MENU'
+Mayari tool categories (xbps-installed, already on the system):
+
+  01 Information Gathering : nmap, masscan, unicornscan, arp-scan, hping3, p0f
+  02 Vulnerability Analysis: nikto, lynis
+  03 Web Application       : sqlmap, whatweb, dirb, davtest
+  04 Password Attacks      : john, hashcat, hydra, medusa, crunch, cewl, ophcrack
+  05 Wireless Attacks      : aircrack-ng, reaver, bettercap, kismet, hcxtools
+  06 Exploitation / RE     : radare2, rizin, gdb, binwalk, yara, ropper, exploitdb
+  07 Sniffing & Spoofing   : tcpdump, wireshark, ettercap, dsniff, sslsplit
+  08 Forensics             : sleuthkit, foremost, testdisk, plaso, regripper
+  09 Reporting             : pandoc, texlive, cherrytree
+
+Run 'mayari-extra-tools list' for tools that have NO Void package and are
+installed separately (Metasploit, BloodHound, nuclei, subfinder, Ghidra,
+Burp/ZAP, SET, Empire, Gophish, Autopsy, Dradis/Faraday, etc.)
+
+Wordlists:   /usr/share/seclists  (run mayari-get-wordlists if missing)
+Full xbps list: /etc/mayari/packages-mayari.lst
+MENU

@@ -1,0 +1,60 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+ "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+<Menu>
+  <Name>Applications</Name>
+
+  <Menu>
+    <Name>mayari-recon</Name>
+    <Directory>mayari-recon.directory</Directory>
+    <Include><Category>Mayari-Recon</Category></Include>
+  </Menu>
+
+  <Menu>
+    <Name>mayari-vuln</Name>
+    <Directory>mayari-vuln.directory</Directory>
+    <Include><Category>Mayari-Vuln</Category></Include>
+  </Menu>
+
+  <Menu>
+    <Name>mayari-web</Name>
+    <Directory>mayari-web.directory</Directory>
+    <Include><Category>Mayari-Web</Category></Include>
+  </Menu>
+
+  <Menu>
+    <Name>mayari-password</Name>
+    <Directory>mayari-password.directory</Directory>
+    <Include><Category>Mayari-Password</Category></Include>
+  </Menu>
+
+  <Menu>
+    <Name>mayari-wireless</Name>
+    <Directory>mayari-wireless.directory</Directory>
+    <Include><Category>Mayari-Wireless</Category></Include>
+  </Menu>
+
+  <Menu>
+    <Name>mayari-exploit</Name>
+    <Directory>mayari-exploit.directory</Directory>
+    <Include><Category>Mayari-Exploit</Category></Include>
+  </Menu>
+
+  <Menu>
+    <Name>mayari-sniff</Name>
+    <Directory>mayari-sniff.directory</Directory>
+    <Include><Category>Mayari-Sniff</Category></Include>
+  </Menu>
+
+  <Menu>
+    <Name>mayari-forensics</Name>
+    <Directory>mayari-forensics.directory</Directory>
+    <Include><Category>Mayari-Forensics</Category></Include>
+  </Menu>
+
+  <Menu>
+    <Name>mayari-report</Name>
+    <Directory>mayari-report.directory</Directory>
+    <Include><Category>Mayari-Report</Category></Include>
+  </Menu>
+
+</Menu>

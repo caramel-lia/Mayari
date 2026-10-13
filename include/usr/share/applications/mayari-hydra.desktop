@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Hydra
+Comment=Network login cracker (GUI)
+Exec=hydra-gtk
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Password;

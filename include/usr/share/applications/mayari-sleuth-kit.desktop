@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Sleuth Kit
+Comment=Disk forensics toolkit
+Exec=xfce4-terminal --hold -e "fls -V"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Forensics;

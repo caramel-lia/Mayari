@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=theHarvester
+Comment=OSINT email/subdomain harvester
+Exec=xfce4-terminal --hold -e "theHarvester -h"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Recon;

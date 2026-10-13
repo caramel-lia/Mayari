@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a0a24"/>
+      <stop offset="100%" stop-color="#3a0d4d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <text x="120" y="950" font-family="monospace" font-size="72" fill="#d946ef" opacity="0.85">MAYARI</text>
+  <text x="120" y="1000" font-family="monospace" font-size="22" fill="#a855f7" opacity="0.7">void-based offensive security</text>
+</svg>

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Masscan
+Comment=Fast port scanner
+Exec=xfce4-terminal --hold -e "masscan --help"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Recon;

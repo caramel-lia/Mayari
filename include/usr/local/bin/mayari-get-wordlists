@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+if [ "$(id -u)" -ne 0 ]; then echo "Run with sudo"; exit 1; fi
+if [ ! -d /usr/share/seclists ]; then
+  git clone --depth 1 https://github.com/danielmiessler/SecLists.git /usr/share/seclists
+else
+  echo "Already present at /usr/share/seclists"
+fi

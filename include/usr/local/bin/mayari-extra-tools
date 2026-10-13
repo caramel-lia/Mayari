@@ -1,0 +1,153 @@
+#!/bin/bash
+#
+# mayari-extra-tools — installs the major pentest tools that have NO Void
+# package (mostly because Kali/Parrot ship them from Debian-specific repos,
+# a Go module, a Ruby gem, or an upstream binary release). Run per-category
+# or 'all'. Installs as the invoking user where possible; a few need sudo.
+#
+# Usage:
+#   mayari-extra-tools list
+#   mayari-extra-tools recon
+#   mayari-extra-tools web
+#   mayari-extra-tools post-exploit
+#   mayari-extra-tools all
+#
+set -uo pipefail
+
+log()  { printf '\n\033[1;35m[extra] %s\033[0m\n' "$1"; }
+warn() { printf '\033[1;33m[!] %s\033[0m\n' "$1"; }
+
+GO_BIN="$HOME/go/bin"
+mkdir -p "$GO_BIN"
+export PATH="$PATH:$GO_BIN"
+
+need_cmd() { command -v "$1" >/dev/null 2>&1; }
+
+recon() {
+  log "Recon / OSINT (go install + pip + git)"
+  need_cmd go   && go install -v github.com/owasp-amass/amass/v4/...@master            || warn "amass needs go"
+  need_cmd go   && go install -v github.com/tomnomnom/waybackurls@latest                || true
+  need_cmd go   && go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest || true
+  need_cmd go   && go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest     || true
+  need_cmd pip  && python3 -m pip install --user --upgrade theHarvester                 || true
+  if [[ ! -d "$HOME/tools/recon-ng" ]]; then
+    git clone --depth 1 https://github.com/lanmaster53/recon-ng.git "$HOME/tools/recon-ng" 2>/dev/null \
+      && python3 -m pip install --user -r "$HOME/tools/recon-ng/REQUIREMENTS" || warn "recon-ng clone/deps failed"
+  fi
+}
+
+vuln_web() {
+  log "Vulnerability analysis / Web app (go install + pip)"
+  need_cmd go  && go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest       || true
+  need_cmd go  && go install -v github.com/ffuf/ffuf/v2@latest                                || true
+  need_cmd go  && go install -v github.com/OJ/gobuster/v3@latest                              || true
+  need_cmd go  && go install -v github.com/epi052/feroxbuster@latest 2>/dev/null              || true
+  need_cmd pip && python3 -m pip install --user --upgrade wpscan-parser commix                || true
+  need_cmd gem && gem install --user-install wpscan                                           || warn "wpscan needs ruby gems"
+  log "OWASP ZAP (upstream release, no package manager involved)"
+  echo "  Download the Linux installer from: https://www.zaproxy.org/download/"
+  log "Burp Suite Community"
+  echo "  PortSwigger requires their own download/installer (license step):"
+  echo "  https://portswigger.net/burp/communitydownload"
+}
+
+passwords() {
+  log "Password attacks extras"
+  need_cmd pip && python3 -m pip install --user --upgrade pipal                               || true
+}
+
+exploitation() {
+  log "Exploitation / post-exploitation (pip + git)"
+  need_cmd pip && python3 -m pip install --user --upgrade impacket pwntools                   || true
+  if [[ ! -d "$HOME/tools/BloodHound.py" ]]; then
+    git clone --depth 1 https://github.com/dirkjanm/BloodHound.py.git "$HOME/tools/BloodHound.py" 2>/dev/null \
+      && python3 -m pip install --user "$HOME/tools/BloodHound.py" || warn "bloodhound.py failed"
+  fi
+  if [[ ! -d "$HOME/tools/Responder" ]]; then
+    git clone --depth 1 https://github.com/lgandx/Responder.git "$HOME/tools/Responder" 2>/dev/null \
+      || warn "Responder clone failed"
+  fi
+  log "Metasploit Framework"
+  echo "  Run: sudo mayari-msf-install   (Rapid7's official installer)"
+  log "BloodHound CE (GUI, needs Docker Compose)"
+  echo "  https://bloodhound.specterops.io/get-started/quickstart/install-data-collector"
+  log "Mimikatz"
+  echo "  Windows-only (reads LSASS); not something that runs on Linux."
+  echo "  For post-exploitation on Windows targets, drop the official binary"
+  echo "  (https://github.com/gentilkiwi/mimikatz) onto the target instead."
+  log "PowerShell Empire / Starkiller"
+  if [[ ! -d "$HOME/tools/Empire" ]]; then
+    git clone --recursive https://github.com/BC-SECURITY/Empire.git "$HOME/tools/Empire" 2>/dev/null \
+      || warn "Empire clone failed — see https://github.com/BC-SECURITY/Empire for setup.sh"
+  fi
+}
+
+reverse_eng() {
+  log "Reverse engineering (upstream releases, need manual unpack)"
+  echo "  Ghidra (needs a JDK 17+):"
+  echo "    xbps-install -y openjdk17"
+  echo "    then download: https://github.com/NationalSecurityAgency/ghidra/releases"
+  echo "  Cutter (radare2/rizin GUI) AppImage:"
+  echo "    https://github.com/rizinorg/cutter/releases"
+  need_cmd pip && python3 -m pip install --user --upgrade androguard                          || true
+}
+
+forensics() {
+  log "Forensics extras"
+  need_cmd pip && python3 -m pip install --user --upgrade volatility3                         || true
+  log "Autopsy (GUI, standalone Linux tarball from Basis Technology)"
+  echo "  https://www.autopsy.com/download/ -> Linux standalone build"
+}
+
+social_eng() {
+  log "Social engineering"
+  if [[ ! -d "$HOME/tools/social-engineer-toolkit" ]]; then
+    git clone --depth 1 https://github.com/trustedsec/social-engineer-toolkit.git "$HOME/tools/social-engineer-toolkit" 2>/dev/null \
+      && (cd "$HOME/tools/social-engineer-toolkit" && python3 -m pip install --user -r requirements.txt) \
+      || warn "SET clone/deps failed"
+  fi
+  log "Gophish (prebuilt Go binary release)"
+  echo "  https://github.com/gophish/gophish/releases"
+}
+
+reporting() {
+  log "Reporting extras"
+  echo "  Dradis / Faraday are Ruby/Python web apps meant to run as a server;"
+  echo "  see https://dradisframework.com/ce/ and https://github.com/infobyte/faraday"
+  echo "  Both are heavier installs (DB + service) better done by hand than scripted blindly."
+}
+
+all() {
+  recon; vuln_web; passwords; exploitation; reverse_eng; forensics; social_eng; reporting
+}
+
+usage() {
+  cat <<EOF
+Usage: mayari-extra-tools <category>
+
+Categories:
+  recon           OSINT / recon tools not in Void repos (amass, subfinder, theHarvester, recon-ng...)
+  web             Web app testing extras (nuclei, ffuf, gobuster, ZAP/Burp pointers)
+  passwords       Password-attack extras (pipal)
+  exploitation    impacket, pwntools, BloodHound.py, Responder, Metasploit/Empire pointers
+  reverse-eng     Ghidra/Cutter pointers, androguard
+  forensics       volatility3, Autopsy pointer
+  social-eng      SET, Gophish pointer
+  reporting       Dradis/Faraday pointers
+  all             Run everything above
+  list            Show this message
+EOF
+}
+
+case "${1:-list}" in
+  recon) recon ;;
+  web) vuln_web ;;
+  passwords) passwords ;;
+  exploitation) exploitation ;;
+  reverse-eng) reverse_eng ;;
+  forensics) forensics ;;
+  social-eng) social_eng ;;
+  reporting) reporting ;;
+  all) all ;;
+  *) usage ;;
+esac

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Hashcat
+Comment=GPU password cracker
+Exec=xfce4-terminal --hold -e "hashcat --help"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Password;

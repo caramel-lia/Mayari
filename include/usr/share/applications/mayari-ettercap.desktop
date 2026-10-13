@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Ettercap
+Comment=MITM attack suite
+Exec=ettercap -G
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Sniff;

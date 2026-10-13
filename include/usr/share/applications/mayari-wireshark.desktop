@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Wireshark
+Comment=Packet analyzer
+Exec=wireshark
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Sniff;

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Amass
+Comment=Attack surface mapping
+Exec=xfce4-terminal --hold -e "amass -h"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Recon;

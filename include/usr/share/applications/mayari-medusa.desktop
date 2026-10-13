@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Medusa
+Comment=Parallel login brute-forcer
+Exec=xfce4-terminal --hold -e "medusa -h"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Password;

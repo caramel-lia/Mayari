@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Gobuster
+Comment=Directory/DNS brute-forcer
+Exec=xfce4-terminal --hold -e "gobuster --help"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Web;

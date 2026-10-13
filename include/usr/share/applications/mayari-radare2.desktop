@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Radare2
+Comment=Reverse engineering framework
+Exec=xfce4-terminal --hold -e "r2 -h"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Exploit;

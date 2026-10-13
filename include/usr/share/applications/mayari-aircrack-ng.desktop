@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Aircrack-ng
+Comment=WiFi security suite
+Exec=xfce4-terminal --hold -e "aircrack-ng --help"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Wireless;

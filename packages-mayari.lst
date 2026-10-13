@@ -1,0 +1,161 @@
+# Mayari package list (Void xbps package names, one per line, '#' = comment)
+# Fed to mklive.sh via -p "$(grep -v '^#' packages-mayari.lst | tr '\n' ' ')"
+#
+# Organized to mirror Kali's own tool categories (MITRE-ATT&CK-ish phases).
+# Only lists tools that genuinely have a Void package. A LOT of Kali's
+# catalog is Debian-only (BloodHound CE, Burp, GVM/OpenVAS, Empire, SET,
+# Armitage, Gophish, Mimikatz, etc.) -- those are handled instead by
+# mayari-extra-tools.sh via go install / pip / gem / upstream release.
+#
+# Verify names before a build: xbps-query -Rs <name>   (names drift over time)
+# install_group() in build-mayari-iso.sh / mayari-postinstall.sh already
+# skips anything not found, so a stale name here just gets a warning.
+
+# --- Base desktop (XFCE, matches Kali/Parrot's default DE footprint) ---
+xfce4
+xfce4-terminal
+xfce4-goodies
+lightdm
+lightdm-gtk3-greeter
+network-manager-applet
+NetworkManager
+pulseaudio
+pavucontrol
+firefox-esr
+
+# --- Core / dev ---
+git
+curl
+wget
+tmux
+vim
+neovim
+python3
+python3-pip
+python3-devel
+python3-virtualenv
+pipx
+base-devel
+ruby
+ruby-devel
+go
+rust
+cargo
+unzip
+zip
+tree
+jq
+htop
+screen
+openssh
+
+# --- 01 Information Gathering / Recon ---
+nmap
+nmap-scripts
+masscan
+unicornscan
+whois
+dnsutils
+bind-utils
+dnstracer
+netcat-openbsd
+socat
+traceroute
+arp-scan
+arping
+fping
+hping3
+p0f
+ike-scan
+onesixtyone
+snmp
+ngrep
+wireshark-qt
+tcpdump
+
+# --- 02 Vulnerability Analysis ---
+nikto
+lynis
+
+# --- 03 Web Application Analysis ---
+sqlmap
+whatweb
+dirb
+davtest
+
+# --- 04 Password Attacks ---
+john
+hashcat
+hashcat-utils
+hydra-gtk
+medusa
+crunch
+cewl
+ophcrack
+ophcrack-cli
+rarcrack
+fcrackzip
+pdfcrack
+rainbowcrack
+hashdeep
+hash-identifier
+
+# --- 05 Wireless Attacks ---
+aircrack-ng
+reaver
+bettercap
+kismet
+horst
+mdk4
+pixiewps
+hcxtools
+
+# --- 06 Exploitation Tools / Reverse Engineering ---
+binwalk
+radare2
+rizin
+gdb
+gdb-multiarch
+gdb-peda
+ltrace
+strace
+capstone
+yara
+upx-ucl
+ropper
+nasm
+exploitdb
+
+# --- 07 Sniffing & Spoofing ---
+tcpdump
+wireshark-qt
+ettercap
+dsniff
+netsniff-ng
+driftnet
+sslstrip
+sslsplit
+
+# --- 08 Forensics ---
+sleuthkit
+foremost
+scalpel
+testdisk
+exiv2
+hashdeep
+bulk-extractor
+ext4magic
+extundelete
+plaso
+rifiuti2
+regripper
+samdump2
+chntpw
+
+# --- 09 Reporting Tools ---
+pandoc
+texlive
+cherrytree
+
+# --- 10 Social Engineering / Web Proxies with Void packages ---
+# (most GUI/Electron social-engineering suites are Debian-only; see extras)

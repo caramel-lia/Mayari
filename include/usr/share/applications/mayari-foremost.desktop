@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Foremost
+Comment=File carving
+Exec=xfce4-terminal --hold -e "foremost -h"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Forensics;

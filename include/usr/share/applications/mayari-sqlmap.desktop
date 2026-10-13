@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=SQLMap
+Comment=SQL injection tool
+Exec=xfce4-terminal --hold -e "sqlmap --help"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Web;

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Recon-ng
+Comment=Recon framework
+Exec=xfce4-terminal --hold -e "recon-ng"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Recon;

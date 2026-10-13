@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Bettercap
+Comment=Network attack framework
+Exec=xfce4-terminal --hold -e "bettercap -h"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Wireless;

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=ExifTool
+Comment=Metadata reader
+Exec=xfce4-terminal --hold -e "exiftool -ver"
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Forensics;

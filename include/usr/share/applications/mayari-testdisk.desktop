@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=TestDisk
+Comment=Partition recovery
+Exec=testdisk
+Icon=utilities-terminal
+Terminal=false
+Categories=Mayari-Forensics;
