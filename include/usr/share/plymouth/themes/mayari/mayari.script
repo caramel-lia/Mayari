@@ -1,0 +1,44 @@
+// Mayari Plymouth boot-splash script
+// Background gradient (approximation; Plymouth script color range is 0.0-1.0)
+Window.SetBackgroundTopColor(0.102, 0.039, 0.141);
+Window.SetBackgroundBottomColor(0.227, 0.051, 0.302);
+
+logo.image = Image("logo.png");
+logo.sprite = Sprite(logo.image);
+logo_x = Window.GetWidth() / 2 - logo.image.GetWidth() / 2;
+logo_y = Window.GetHeight() / 2 - logo.image.GetHeight() / 2 - 40;
+logo.sprite.SetX(logo_x);
+logo.sprite.SetY(logo_y);
+
+track.image = Image("bar_track.png");
+track.sprite = Sprite(track.image);
+track_x = Window.GetWidth() / 2 - track.image.GetWidth() / 2;
+track_y = logo_y + logo.image.GetHeight() + 50;
+track.sprite.SetX(track_x);
+track.sprite.SetY(track_y);
+
+fill.image = Image("bar_fill.png");
+fill.sprite = Sprite();
+fill.sprite.SetX(track_x);
+fill.sprite.SetY(track_y);
+
+fun progress_callback(duration, progress)
+{
+  fill_width = fill.image.GetWidth() * progress;
+  if (fill_width < 1) {
+    fill_width = 1;
+  }
+  scaled_image = fill.image.Scale(fill_width, fill.image.GetHeight());
+  fill.sprite.SetImage(scaled_image);
+}
+
+Plymouth.SetBootProgressFunction(progress_callback);
+
+fun quit_callback()
+{
+  logo.sprite.SetOpacity(0);
+  track.sprite.SetOpacity(0);
+  fill.sprite.SetOpacity(0);
+}
+
+Plymouth.SetQuitFunction(quit_callback);

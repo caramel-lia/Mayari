@@ -88,6 +88,49 @@ packaging: **Mimikatz** reads Windows LSASS memory and only runs on
 Windows — it's not something you install on a Linux distro, Kali included
 (Kali ships it only as a Windows payload to drop on a target).
 
+## Boot splash, GRUB theme & wallpaper
+
+- **`include/usr/share/backgrounds/mayari/mayari-wallpaper.png`** — the
+  default desktop wallpaper, set two ways for reliability: a system-wide
+  XFCE default (`/etc/xdg/xfce4/.../xfce4-desktop.xml`, applies to any user
+  with no wallpaper preference yet) and a copy seeded into `/etc/skel`
+  (applies to brand-new user accounts `void-installer` creates). The same
+  image is used as the LightDM login-screen background.
+- **`include/boot/grub/themes/mayari/`** — a GRUB theme (background +
+  styled boot-menu text) activated via `GRUB_THEME` in
+  `include/etc/default/grub`. This themes the GRUB menu **of the installed
+  system** — what you see every time the machine boots afterward.
+- **`include/usr/share/plymouth/themes/mayari/`** — a Plymouth splash
+  (logo + progress bar) shown between GRUB and the login screen, activated
+  via `quiet splash` on the kernel command line plus
+  `plymouth-set-default-theme -R mayari` (the `-R` rebuilds the initramfs
+  so the theme is actually baked in — `include/etc/dracut.conf.d/plymouth.conf`
+  makes sure the Plymouth dracut module gets included).
+- Regenerate assets anytime with `python3 gen_assets.py` (uses Pillow;
+  edit the colors/text at the top of the script) — it writes PNGs to
+  `../mayari-assets/`, which you then copy into `include/` at the paths
+  above.
+
+**Scope / what this does and doesn't cover:**
+- `build-mayari-iso.sh` (the ISO builder) ships these theme files into the
+  live rootfs via `-I include`, so they're present and correct once you
+  install Mayari to disk and `mayari-postinstall.sh`'s activation steps run
+  (or you run the same `grub-mkconfig` / `plymouth-set-default-theme -R`
+  commands yourself after `void-installer` finishes).
+- The **live ISO's own boot menu** (what you see booting the USB/DVD
+  itself, before anything is installed) is generated internally by
+  `void-mklive` using its own ISOLINUX/GRUB templates. Reskinning *that*
+  specific menu means patching void-mklive's own template files, which
+  isn't done here — the Mayari theme applies to GRUB on the **installed**
+  system, which is what you'll actually see on every normal boot.
+- **Preview without rebooting:**
+  `sudo plymouth-set-default-theme -R mayari && sudo plymouth --show-splash`
+  renders the splash to the current VT so you can check it without a full
+  reboot cycle; Ctrl+C or `sudo plymouth quit` to stop it. Plymouth's
+  script language is a bit idiosyncratic — if `mayari.script` throws
+  errors, `journalctl -b | grep -i plymouth` (or `plymouthd --debug`) will
+  show what it didn't like.
+
 ## Customizing
 
 - **Tool list**: edit `packages-mayari.lst`. Verify package names with

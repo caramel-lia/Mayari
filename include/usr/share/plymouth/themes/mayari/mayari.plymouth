@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Mayari
+Description=Mayari boot splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/mayari
+ScriptFile=/usr/share/plymouth/themes/mayari/mayari.script

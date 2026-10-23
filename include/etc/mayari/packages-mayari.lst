@@ -17,6 +17,7 @@ xfce4-terminal
 xfce4-goodies
 lightdm
 lightdm-gtk3-greeter
+plymouth
 network-manager-applet
 NetworkManager
 pulseaudio

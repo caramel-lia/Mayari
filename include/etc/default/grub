@@ -1,0 +1,12 @@
+# Mayari GRUB defaults. If you already customized /etc/default/grub,
+# merge these lines in instead of overwriting (see README: "Customizing").
+GRUB_DEFAULT=0
+GRUB_TIMEOUT=5
+GRUB_TIMEOUT_STYLE=menu
+GRUB_DISTRIBUTOR="Mayari"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+GRUB_CMDLINE_LINUX=""
+GRUB_THEME="/boot/grub/themes/mayari/theme.txt"
+GRUB_GFXMODE=1920x1080,auto
+GRUB_GFXPAYLOAD_LINUX=keep
+GRUB_DISABLE_OS_PROBER=false
