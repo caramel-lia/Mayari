@@ -19,45 +19,94 @@
 # passwordless) with a "Install" shortcut that runs void-installer —
 # exactly like Kali/Parrot's live-then-install flow.
 #
-set -euo pipefail
+set -Eeuo pipefail
 
-if [[ $EUID -ne 0 ]]; then
-  echo "Run as root: sudo ./build-mayari-iso.sh" >&2
-  exit 1
-fi
+log()  { printf '\n\033[1;35m[Mayari build]\033[0m %s\n' "$*"; }
+warn() { printf '\033[1;33m[Mayari warning]\033[0m %s\n' "$*" >&2; }
+die()  { printf '\033[1;31m[Mayari error]\033[0m %s\n' "$*" >&2; exit 1; }
+
+[[ $EUID -eq 0 ]] || die "Run as root: sudo ./build-mayari-iso-fixed.sh"
+command -v xbps-install >/dev/null 2>&1 || die "This script requires Void Linux with XBPS installed."
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKDIR="$SCRIPT_DIR/.mklive-work"
 MKLIVE_DIR="$WORKDIR/void-mklive"
+PKG_FILE="$SCRIPT_DIR/packages-mayari.lst"
+INCLUDE_DIR="$SCRIPT_DIR/include"
+OUT_NAME="mayari-$(date +%Y%m%d)-x86_64.iso"
 
-log()  { printf '\n\033[1;35m[Mayari build] %s\033[0m\n' "$1"; }
+[[ -f $PKG_FILE ]] || die "Missing package list: $PKG_FILE"
+[[ -d $INCLUDE_DIR ]] || die "Missing branding directory: $INCLUDE_DIR"
 
-log "Installing build dependencies"
-xbps-install -Sy git squashfs-tools xorriso grub-i386-efi grub-x86_64-efi \
-  mtools erofs-utils libisoburn dialog bash
+# Package names, not command names: xorriso supplies ISO creation tools.
+# libisoburn is a source/library name, not a required separate XBPS package.
+BUILD_PACKAGES=(git squashfs-tools xorriso grub-i386-efi grub-x86_64-efi mtools erofs-utils dialog bash)
 
-mkdir -p "$WORKDIR"
-if [[ ! -d "$MKLIVE_DIR" ]]; then
-  log "Cloning void-mklive"
-  git clone https://github.com/void-linux/void-mklive.git "$MKLIVE_DIR"
+log "Synchronizing XBPS repository metadata"
+xbps-install -S || die "Cannot synchronize XBPS repositories. Check network/repository configuration."
+
+missing=()
+for package in "${BUILD_PACKAGES[@]}"; do
+  if xbps-query -i "$package" >/dev/null 2>&1; then
+    log "Already installed: $package"
+  else
+    log "Missing dependency: $package"
+    missing+=("$package")
+  fi
+done
+
+if (( ${#missing[@]} > 0 )); then
+  log "Installing missing build dependencies: ${missing[*]}"
+  xbps-install -y "${missing[@]}" || die "Dependency installation failed. Verify that the repositories support these packages."
 else
-  log "Updating void-mklive"
-  git -C "$MKLIVE_DIR" pull
+  log "All build dependencies are installed"
 fi
 
-PKG_LIST=$(grep -v '^\s*#' "$SCRIPT_DIR/packages-mayari.lst" | grep -v '^\s*$' | tr '\n' ' ')
+for tool in git xorriso mksquashfs; do
+  command -v "$tool" >/dev/null 2>&1 || die "Required tool '$tool' is unavailable even after installing dependencies."
+done
 
-OUT_NAME="mayari-$(date +%Y%m%d)-x86_64"
+mkdir -p "$WORKDIR"
+if [[ ! -d "$MKLIVE_DIR/.git" ]]; then
+  [[ ! -e "$MKLIVE_DIR" ]] || die "$MKLIVE_DIR exists but is not a Git repository. Move it aside and retry."
+  log "Cloning void-mklive"
+  git clone --depth 1 https://github.com/void-linux/void-mklive.git "$MKLIVE_DIR"
+else
+  log "Updating void-mklive"
+  git -C "$MKLIVE_DIR" pull --ff-only || die "Cannot fast-forward void-mklive checkout. Resolve local changes first."
+fi
 
-log "Building ISO (this takes a while — downloads every package above)"
+[[ -x "$MKLIVE_DIR/mkiso.sh" ]] || die "mkiso.sh was not found or is not executable in void-mklive."
+
+# Trim comments/blank lines and combine package names as space-separated arguments.
+# Reject malformed entries instead of feeding them to XBPS as packages.
+packages=()
+while IFS= read -r line || [[ -n "$line" ]]; do
+  line="${line%%#*}"
+  read -r -a words <<< "$line"
+  for pkg in "${words[@]}"; do
+    [[ "$pkg" =~ ^[[:alnum:]_+.-]+$ ]] || die "Invalid package name in $PKG_FILE: $pkg"
+    packages+=("$pkg")
+  done
+done < "$PKG_FILE"
+
+if (( ${#packages[@]} == 0 )); then
+  warn "Package list is empty; generating standard XFCE live ISO with Mayari branding."
+fi
+
+log "Building XFCE live image with installer and Mayari customizations"
 cd "$MKLIVE_DIR"
-./mklive.sh \
-  -a x86_64 \
-  -p "$PKG_LIST" \
-  -I "$SCRIPT_DIR/include" \
+# mkiso.sh adds the installer, XFCE, desktop services, and bootloader packages.
+# Additional mklive.sh flags follow --, per upstream documentation.
+./mkiso.sh -a x86_64 -b xfce -- \
+  -p "${packages[*]}" \
+  -I "$INCLUDE_DIR" \
   -T "Mayari Live" \
-  -o "$SCRIPT_DIR/${OUT_NAME}.iso"
+  -o "$SCRIPT_DIR/$OUT_NAME"
 
-log "Done: $SCRIPT_DIR/${OUT_NAME}.iso"
-echo "Flash it with: sudo dd if=${OUT_NAME}.iso of=/dev/sdX bs=4M status=progress"
-echo "Or attach it directly as a VMware CD/DVD image to boot and install."
+[[ -s "$SCRIPT_DIR/$OUT_NAME" ]] || die "Build exited but ISO is missing or empty."
+log "Done: $SCRIPT_DIR/$OUT_NAME"
+printf 'To write to a USB drive (replace /dev/sdX with the correct whole disk):\n'
+printf '  sudo dd if=%q of=/dev/sdX bs=4M status=progress conv=fsync\n' "$SCRIPT_DIR/$OUT_NAME"
+printf 'Or attach the ISO as a virtual CD/DVD in VMware or VirtualBox.\n'
+
